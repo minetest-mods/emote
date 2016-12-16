@@ -34,6 +34,7 @@ function emote.start(player, emotestring)
 			local len = (e[1].y - e[1].x) / e[2]
 			minetest.after(len, emote.stop, player)
 		end
+		return true
 	else
 		return false
 	end
