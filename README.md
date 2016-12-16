@@ -24,6 +24,21 @@ Stops any emote for the named player.
 
 Lists known emotestring values.
 
+`emote.attach_to_node(player, pos)`
+
+Attach the player to the node at pos. The attachment will be made using the
+parameters provided in the `emote` table in the nodedef:
+```
+nodedef.emote = {
+	emotestring = "sit",
+	eye_offset = {x = 0, y = 0, z = 0},
+	player_offset = {x = 0, y = 1/2, z = 0},
+	look_horizontal_offset = 0,
+}
+```
+
+The player offset vector will be rotated to account for the node facedir.
+
 ## Commands
 
 The emotes are all usable by players using chat commands:
