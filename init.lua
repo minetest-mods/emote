@@ -23,6 +23,7 @@ local emotes = {
 }
 
 local emoting = {}
+local attached = {}
 
 -- helper functions
 local function facedir_to_look_horizontal(dir)
@@ -47,6 +48,45 @@ local function vector_rotate_xz(vec, angle)
 		z = (vec.z * math.cos(a)) - (vec.x * math.sin(a))
 	}
 end
+
+-- entity for locked emotes (attached to nodes, etc)
+local attacher = {
+	description = "Attachment entity for emotes",
+	physical = false,
+	visual = "upright_sprite",
+	visual_size = {x = 1/16, y = 1/16},
+	spritediv = {x = 1/16, y = 1/16},
+	collisionbox = {-1/16, -1/16, -1/16, 1/16, 1/16, 1/16},
+	textures = {"emote_blank.png"},
+	init = function(self, player)
+		self.player = player
+	end,
+}
+
+function attacher:on_step(dtime)
+	if not self.player then
+		self.object:remove()
+		return
+	end
+
+	local ctrl = self.player:get_player_control()
+	if ctrl.jump then
+		self:detach()
+		return
+	end
+end
+
+function attacher:detach()
+	attached[self.player] = nil
+	self.player:set_detach()
+	self.player:set_animation(unpack(emotes["stand"]))
+	self.object:remove()
+	default.player_attached[self.player:get_player_name()] = nil
+end
+
+minetest.register_entity("emote:attacher", attacher)
+
+-- API functions
 
 function emote.start(player, emotestring)
 	emote.stop(player)
@@ -79,10 +119,14 @@ function emote.list()
 	return r
 end
 
-function emote.attach_to_node(player, pos)
+function emote.attach_to_node(player, pos, locked)
 	local node = minetest.get_node(pos)
 	if node.name == "ignore" then
 		return false
+	end
+
+	if attached[player] then
+		return
 	end
 
 	local def = minetest.registered_nodes[node.name].emote or {}
@@ -94,11 +138,28 @@ function emote.attach_to_node(player, pos)
 		emotestring = def.emotestring or "sit",
 	}
 
-	player:setpos(vector.add(pos, vector_rotate_xz(emotedef.player_offset, facedir_to_look_horizontal(node.param2))))
-	player:set_eye_offset(emotedef.eye_offset, {x = 0, y = 0, z = 0})
-	player:set_look_horizontal(facedir_to_look_horizontal(node.param2) + emotedef.look_horizontal_offset)
-	player:set_animation(unpack(emotes[emotedef.emotestring]))
-	player:set_physics_override(0, 0, 0)
+	if locked then
+		player:set_animation(unpack(emotes[emotedef.emotestring]))
+		local offset = vector_rotate_xz(emotedef.player_offset,facedir_to_look_horizontal(node.param2))
+		local object = minetest.add_entity(vector.add(pos, offset), "emote:attacher")
+		object:get_luaentity():init(player)
+		local rotation = facedir_to_look_horizontal(node.param2) + emotedef.look_horizontal_offset
+		object:setyaw(rotation)
+		player:set_attach(object, "", emotedef.eye_offset, minetest.facedir_to_dir(node.param2))
+		player:set_look_horizontal(rotation)
+		-- this is highly unreliable!
+		minetest.after(0, function()
+			player:set_animation(unpack(emotes[emotedef.emotestring]))
+		end)
+		attached[player] = object
+		default.player_attached[player:get_player_name()] = true
+	else
+		player:setpos(vector.add(pos, vector_rotate_xz(emotedef.player_offset, facedir_to_look_horizontal(node.param2))))
+		player:set_eye_offset(emotedef.eye_offset, {x = 0, y = 0, z = 0})
+		player:set_look_horizontal(facedir_to_look_horizontal(node.param2) + emotedef.look_horizontal_offset)
+		player:set_animation(unpack(emotes[emotedef.emotestring]))
+		player:set_physics_override(0, 0, 0)
+	end
 end
 
 function emote.attach_to_entity(player, emotestring, obj)
@@ -106,6 +167,9 @@ function emote.attach_to_entity(player, emotestring, obj)
 end
 
 function emote.detach(player)
+	if attached[player] then
+		attached[player]:detach()
+	end
 	-- check if attached?
 	player:set_eye_offset(vector.new(), vector.new())
 	player:set_physics_override(1, 1, 1)

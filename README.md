@@ -24,7 +24,7 @@ Stops any emote for the named player.
 
 Lists known emotestring values.
 
-`emote.attach_to_node(player, pos)`
+`emote.attach_to_node(player, pos, locked)`
 
 Attach the player to the node at pos. The attachment will be made using the
 parameters provided in the `emote` table in the nodedef:
@@ -36,6 +36,10 @@ nodedef.emote = {
 	look_horizontal_offset = 0,
 }
 ```
+
+if `locked` is `true`, then the player is fixed to the node and can only
+move until he presses `jump`. While sitting the player can look around but
+his character does not turn.
 
 The player offset vector will be rotated to account for the node facedir.
 
