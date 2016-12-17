@@ -14,12 +14,12 @@ emote = {}
 
 local emotes = {
 	stand  = {{x =   0, y =  79}, 30, 0, true},
-	sit    = {{x =  81, y = 160}, 30, 0, true},
-	lay    = {{x = 162, y = 166}, 30, 0, true},
-	sleep  = {{x = 162, y = 166}, 30, 0, true}, -- alias for lay
-	wave   = {{x = 192, y = 196}, 15, 0, false},
-	point  = {{x = 196, y = 196}, 30, 0, true},
-	freeze = {{x = 205, y = 205}, 30, 0, true},
+	sit    = {{x =  81, y = 160}, 30, 0, true, "sits"},
+	lay    = {{x = 162, y = 166}, 30, 0, true, "lies down"},
+	sleep  = {{x = 162, y = 166}, 30, 0, true, "falls asleep"}, -- alias for lay
+	wave   = {{x = 192, y = 196}, 15, 0, false, "waves"},
+	point  = {{x = 196, y = 196}, 30, 0, true, "points"},
+	freeze = {{x = 205, y = 205}, 30, 0, true, "freezes"},
 }
 
 local emoting = {}
@@ -94,6 +94,7 @@ function emote.start(player, emotestring)
 		player:set_animation(unpack(emotes[emotestring]))
 		emoting[player] = emotestring
 		local e = emotes[emotestring]
+		minetest.chat_send_all("* " .. player:get_player_name() .. " " .. e[5])
 		if not e[4] then
 			local len = (e[1].y - e[1].x) / e[2]
 			minetest.after(len, emote.stop, player)
