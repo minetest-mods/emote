@@ -57,6 +57,12 @@ rotation and offset so that players can easily sit on chairs,
 lie on beds or emote-interact with machines (e.g. point emote
 when interacting with a node).
 
+## Can I sit on stair blocks with this?
+
+The patch file `sit-on-stairs.patch` in this project is an example
+patch for minetest_game that will allow a player to right-click stair
+nodes and sit on them as if they were seats.
+
 ## License
 
 LGPL-2.1
