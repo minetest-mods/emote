@@ -13,7 +13,7 @@ of the license, or (at your option) any later version.
 emote = {}
 
 local emotes = {
-	stand  = {{x =   0, y =  79}, 30, 0, true},
+	stand  = {{x =   0, y =  79}, 30, 0, true, "stands up"},
 	sit    = {{x =  81, y = 160}, 30, 0, true, "sits"},
 	lay    = {{x = 162, y = 166}, 30, 0, true, "lies down"},
 	sleep  = {{x = 162, y = 166}, 30, 0, true, "falls asleep"}, -- alias for lay
@@ -94,7 +94,9 @@ function emote.start(player, emotestring)
 		player:set_animation(unpack(emotes[emotestring]))
 		emoting[player] = emotestring
 		local e = emotes[emotestring]
-		minetest.chat_send_all("* " .. player:get_player_name() .. " " .. e[5])
+		if e[5] then
+			minetest.chat_send_all("* " .. player:get_player_name() .. " " .. e[5])
+		end
 		if not e[4] then
 			local len = (e[1].y - e[1].x) / e[2]
 			minetest.after(len, emote.stop, player)
