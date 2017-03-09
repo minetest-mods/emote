@@ -9,6 +9,9 @@ read_globals = {
 	"VoxelManip", "VoxelArea",
 	"PseudoRandom", "ItemStack",
 	"intllib",
+}
+
+globals = {
 	"default",
 }
 
