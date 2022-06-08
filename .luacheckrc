@@ -12,6 +12,6 @@ read_globals = {
 }
 
 globals = {
-	"default",
+	"player_api",
 }
 

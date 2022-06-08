@@ -65,4 +65,5 @@ nodes and sit on them as if they were seats.
 
 ## License
 
+Copyright (C) 2016 - Auke Kok <sofar@foo-projects.org>
 LGPL-2.1
