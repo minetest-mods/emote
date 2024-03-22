@@ -1,5 +1,5 @@
 local S = emote.S
-local facedir_to_look_horizontal = emote.facedir_to_look_horizontal
+local facedir_to_look_horizontal = emote.util.facedir_to_look_horizontal
 local vector_rotate_xz = emote.util.vector_rotate_xz
 
 emote.emotes = {}
