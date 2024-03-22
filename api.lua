@@ -105,7 +105,7 @@ function emote.attach_to_node(player, pos, locked)
 	local rotation = look_horizontal + emotedef.look_horizontal_offset
 	local new_pos = vector.add(pos, offset)
 
-	emote.set_animation(player, emotedef.emotestring)
+	emote.start(player, emotedef.emotestring)
 
 	if locked then
 		local object = minetest.add_entity(new_pos, "emote:attacher")
@@ -119,8 +119,6 @@ function emote.attach_to_node(player, pos, locked)
 		end
 
 	else
-		emote.set_animation(player, emotedef.emotestring)
-
 		player:set_pos(new_pos)
 		player:set_eye_offset(emotedef.eye_offset, {x = 0, y = 0, z = 0})
 	end
