@@ -1,13 +1,12 @@
-
 -- entity for locked emotes (attached to nodes, etc)
 local attacher = {
 	description = "Attachment entity for emotes",
 	physical = false,
 	visual = "upright_sprite",
-	visual_size = {x = 1/16, y = 1/16},
-	spritediv = {x = 1/16, y = 1/16},
-	collisionbox = {-1/16, -1/16, -1/16, 1/16, 1/16, 1/16},
-	textures = {"emote_blank.png"},
+	visual_size = { x = 1 / 16, y = 1 / 16 },
+	spritediv = { x = 1 / 16, y = 1 / 16 },
+	collisionbox = { -1 / 16, -1 / 16, -1 / 16, 1 / 16, 1 / 16, 1 / 16 },
+	textures = { "emote_blank.png" },
 	static_save = false,
 	init = function(self, player)
 		self.player = player
@@ -15,7 +14,7 @@ local attacher = {
 }
 
 function attacher:on_step()
-	if not minetest.is_player(self.player) then
+	if not core.is_player(self.player) then
 		self.object:remove()
 		return
 	end
@@ -29,7 +28,7 @@ end
 function attacher:detach()
 	emote.attached[self.player] = nil
 
-	if not minetest.is_player(self.player) then
+	if not core.is_player(self.player) then
 		return
 	end
 
@@ -39,4 +38,4 @@ function attacher:detach()
 	emote.stop(self.player)
 end
 
-minetest.register_entity("emote:attacher", attacher)
+core.register_entity("emote:attacher", attacher)

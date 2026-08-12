@@ -10,12 +10,12 @@ emote.emoting = {}
 -- API functions
 
 function emote.register_emote(name, def)
-    emote.emotes[name] = def
+	emote.emotes[name] = def
 
-	minetest.register_chatcommand(name, {
+	core.register_chatcommand(name, {
 		description = S("Makes your character perform the @1 emote", name),
 		func = function(playername)
-			local player = minetest.get_player_by_name(playername)
+			local player = core.get_player_by_name(playername)
 			if emote.start(player, name) then
 				if not emote.settings.announce_in_chat then
 					return true, S("You @1", name)
@@ -30,7 +30,7 @@ function emote.register_emote(name, def)
 end
 
 function emote.start(player, emote_name)
-	if not minetest.is_player(player) then
+	if not core.is_player(player) then
 		emote.emoting[player] = nil
 		return
 	end
@@ -53,17 +53,16 @@ function emote.start(player, emote_name)
 
 	if emote_def.eye_offset then
 		player:set_eye_offset(emote_def.eye_offset, emote_def.eye_offset)
-
 	else
 		player:set_eye_offset()
 	end
 
 	if emote.settings.announce_in_chat then
-		minetest.chat_send_all(("* %s %s"):format(player_name, emote_def.description))
+		core.chat_send_all(("* %s %s"):format(player_name, emote_def.description))
 	end
 
 	if emote_def.stop_after then
-		minetest.after(emote_def.stop_after, emote.stop, player)
+		core.after(emote_def.stop_after, emote.stop, player)
 	end
 
 	return true
@@ -82,7 +81,7 @@ function emote.list()
 end
 
 function emote.attach_to_node(player, pos, locked)
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
 	if node.name == "ignore" then
 		return false
 	end
@@ -91,11 +90,11 @@ function emote.attach_to_node(player, pos, locked)
 		return
 	end
 
-	local def = minetest.registered_nodes[node.name].emote or {}
+	local def = core.registered_nodes[node.name].emote or {}
 
 	local emotedef = {
-		eye_offset = def.eye_offset or {x = 0, y = 1/2, z = 0},
-		player_offset = def.player_offset or {x = 0, y = 0, z = 0},
+		eye_offset = def.eye_offset or { x = 0, y = 1 / 2, z = 0 },
+		player_offset = def.player_offset or { x = 0, y = 0, z = 0 },
 		look_horizontal_offset = def.look_horizontal_offset or 0,
 		emotestring = def.emotestring or "sit",
 	}
@@ -108,19 +107,18 @@ function emote.attach_to_node(player, pos, locked)
 	emote.start(player, emotedef.emotestring)
 
 	if locked then
-		local object = minetest.add_entity(new_pos, "emote:attacher")
+		local object = core.add_entity(new_pos, "emote:attacher")
 		if object then
 			object:get_luaentity():init(player)
 			object:set_yaw(rotation)
 
-			player:set_attach(object, "", emotedef.eye_offset, minetest.facedir_to_dir(node.param2))
+			player:set_attach(object, "", emotedef.eye_offset, core.facedir_to_dir(node.param2))
 
 			emote.attached_to_node[player] = object
 		end
-
 	else
 		player:set_pos(new_pos)
-		player:set_eye_offset(emotedef.eye_offset, {x = 0, y = 0, z = 0})
+		player:set_eye_offset(emotedef.eye_offset, { x = 0, y = 0, z = 0 })
 	end
 
 	player:set_look_horizontal(rotation)
@@ -139,7 +137,7 @@ function emote.detach(player)
 	emote.stop(player)
 end
 
-minetest.register_globalstep(function()
+core.register_globalstep(function()
 	for player in pairs(emote.emoting) do
 		local ctrl = player:get_player_control()
 		if ctrl and (ctrl.jump or ctrl.up or ctrl.down or ctrl.left or ctrl.right) then
