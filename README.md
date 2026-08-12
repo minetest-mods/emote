@@ -1,5 +1,8 @@
-Emote - a player emote API
-##########################
+# Emote
+
+![Luacheck](https://github.com/minetest-mods/emote/workflows/luacheck/badge.svg)
+[![ContentDB](https://content.luanti.org/packages/sofar/emote/shields/downloads/)](https://content.luanti.org/packages/sofar/emote/)
+[![Luanti Forums](https://img.shields.io/badge/Luanti%20Forums-Topic%20%2316374-blue.svg)](https://forum.luanti.org/viewtopic.php?t=16374)
 
 This mod aims to provide an API for player model animations such
 as sitting, waving, lying down, as well as some providing chat
@@ -28,6 +31,7 @@ Lists known emotestring values.
 
 Attach the player to the node at pos. The attachment will be made using the
 parameters provided in the `emote` table in the nodedef:
+
 ```
 nodedef.emote = {
 	emotestring = "sit",
