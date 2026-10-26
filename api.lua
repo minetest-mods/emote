@@ -35,13 +35,17 @@ function emote.start(player, emote_name)
 		return
 	end
 
+	local player_name = player:get_player_name()
+	if player_api.player_attached[player_name] and not emote.emoting[player] then
+		return false
+	end
+
 	local emote_def = emote.emotes[emote_name]
 
 	if not emote_def then
 		return false
 	end
 
-	local player_name = player:get_player_name()
 	player_api.set_animation(player, emote_def.anim_name, emote_def.speed)
 	if emote_name == "stand" then
 		emote.emoting[player] = nil
